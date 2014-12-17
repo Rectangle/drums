@@ -6,7 +6,6 @@
 
 var bass_drum_harmonics = [1.0, 2.36, 1.72, 1.86, 2.72, 3.64]; // , 4.5, 5.46]
 var snare_drum_harmonics = [1.0, 1.6, 2.13, 2.66, 2.3, 2.92, 3.5, 4.07]; // 4.24, 4.84
-
 export function NoiseMaker(color, decay, base_amp){
   
   var w = 0;
@@ -75,12 +74,12 @@ export function Drumhead(freq, harmonics, harmonic_power, decay, freq_decay, bas
 }
 
   
-export function Bassdrum(freq, decay, freq_decay, base_amp){
+export function Bassdrum(freq, decay, freq_decay, click_amp, base_amp){
   
   var tap_decay = 5*decay;
   
   var drumhead = Drumhead(freq, bass_drum_harmonics, 1, decay, freq_decay, base_amp);
-  var drumnoise = NoiseMaker(0, tap_decay, base_amp/12);
+  var drumnoise = NoiseMaker(0, tap_decay, click_amp);
   
   return{
     
@@ -129,3 +128,25 @@ export function Snaredrum(freq, decay, noise_amp, drumhead_amp){
 }
 
 
+
+export function Tomdrum(freq, decay, freq_decay, base_amp){
+  
+  
+  var drumhead = Drumhead(freq, snare_drum_harmonics, 1, decay, freq_decay, base_amp);
+  
+  return{
+    
+    drumhead : drumhead,
+    
+    
+    hit : function(v){
+      this.drumhead.hit(v);
+    },
+    
+    play : function(){
+      return this.drumhead.play();
+    }
+    
+  };
+  
+}

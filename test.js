@@ -29,14 +29,15 @@
  *    freq_decay signifies how rapidly the frequnecies decay, with higher being faster
  *    base_amp is an easy way to multiply the amplitude for the entire NoiseMaker
  * 
- * Bassdrum(freq, decay, freq_decay, base_amp)
- *    Sets up a drumhead to sound like a bass drum or tom-tom.
- *    A combination of a Drumhead with a small clicking Noisemaker.
+ * Bassdrum(freq, decay, freq_decay, click_amp, base_amp)
+ *    Sets up a drumhead to sound like a bass drum.
+ *    A combination of a Drumhead with a Noisemaker.
  *    The harmonics are taken from: 
  *    http://www.soundonsound.com/sos/feb02/articles/synthsecrets0202.asp
  *    It's important that the harmonics are non-integers, as drums are characteristically inharmonic.
- *    For a tighter membrane, lower the freq_decay. A freq decay of 0 sounds like a timpani
- *    For suggested examples, see below
+ *    For a tighter membrane, lower the freq_decay. A freq decay of 0 sounds like a timpani.
+ *    click_amp is amplitude of the click.
+ *    For suggested examples, see below.
  * 
  * Snaredrum(freq, decay, noise_amp, drumhead_amp)
  *    Sets up a drumhead to sound like a snare drum.
@@ -47,6 +48,9 @@
  *    Setting drumhead_amp to low values gives a harsh, flat sounding snare.
  *    Recommended ratio is to set drumhead_amp = 4*noise_amp (as below)
  * 
+ * Tomdrum(freq, decay, freq_decay, base_amp)
+ *    Like the Bassdrum method -- the main difference is the use of snare drum harmonics
+ * 
  */
 
 
@@ -54,16 +58,19 @@ import { NoiseMaker } from './index';
 import { Drumhead } from './index';
 import { Bassdrum } from './index';
 import { Snaredrum } from './index';
+import { Tomdrum } from './index';
 
-var bassdrum = Bassdrum(82.5, 30, 2, 1.5);
+import Reverb from 'opendsp/freeverb';
+
+var bassdrum = Bassdrum(82.5, 20, 2, 0.1, 1.5);
 
 var hihat = NoiseMaker(0, 30, 0.1);
 
 var snare = Snaredrum(220, 20, 0.2, 0.8);
 
-var tom1 = Bassdrum(82.5, 10, 0.7, 1.5);
-var tom2 = Bassdrum(110, 10, 0.7, 1.5);
-var tom3 = Bassdrum(165, 10, 0.7, 1.5);
+var tom1 = Tomdrum(110,   10, 0.2, 1.5);
+var tom2 = Tomdrum(137.5, 10, 0.2, 1.5);
+var tom3 = Tomdrum(165,   10, 0.2, 1.5);
 
 var snare2 = Snaredrum(440, 50, 0.05, 0.0);
 var snare3 = Snaredrum(440, 50, 0.05, 0.1);
@@ -89,8 +96,12 @@ var drums = {
   }
 };
 
+var wet;
+var rev = Reverb();
+rev.room(0.9).damp(0.9);
 
-var bpm = 180;
+
+var bpm = 150;
 
 // choose a sample beat to play
 // 0: basic rock beat
@@ -139,12 +150,26 @@ export function dsp(t) {
       if (each(beats,1,2)) snare.hit(1);
       if (each(beats,7.5,8)) snare.hit(1);
       
-      if (each(beats,3.5,4)) tom2.hit(1);
+      if (each(beats,3.5,8)) tom2.hit(1);
       
-      if (each(beats,0,0.5)) hihat.hit(1);
+      if (each(beats,0,1)) hihat.hit(1);
+      if (each(beats,0.5,1)) hihat.hit(0.5);
+      
+      
+      if (each(beats,0,8)) hihat.set_decay(30);
+      if (each(beats,7.5,8)) hihat.set_decay(5);
       
       break;
   }
+
+  var output = compress(drums.play());
+  
+  wet = rev.run(output);
+  
+  if (each(beats,0,4)) console.log(wet);
+
+  return output;
+  
   
   
   /*
@@ -338,11 +363,6 @@ export function dsp(t) {
   
 
   */
-
-  var output = compress(drums.play());
-  
-  return output;
-  
   
 }
 
