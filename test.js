@@ -46,10 +46,9 @@
  *    http://www.soundonsound.com/sos/Mar02/articles/synthsecrets0302.asp
  *    For an open snare, set noise_amp to 0.
  *    Setting drumhead_amp to low values gives a harsh, flat sounding snare.
- *    Recommended ratio is to set drumhead_amp = 4*noise_amp (as below)
  * 
  * Tomdrum(freq, decay, freq_decay, base_amp)
- *    Like the Bassdrum method -- the main difference is the use of snare drum harmonics
+ *    Combines the Noisemaker of the SnareDrum with the frequency decayed Drumhead of the Bassdrum
  * 
  */
 
@@ -60,17 +59,15 @@ import { Bassdrum } from './index';
 import { Snaredrum } from './index';
 import { Tomdrum } from './index';
 
-import Reverb from 'opendsp/freeverb';
-
-var bassdrum = Bassdrum(82.5, 20, 2, 0.1, 1.5);
+var bassdrum = Bassdrum(82.5, 30, 2, 0.1, 2);
 
 var hihat = NoiseMaker(0, 30, 0.1);
 
-var snare = Snaredrum(220, 20, 0.2, 0.8);
+var snare = Snaredrum(220, 20, 0.2, 1);
 
-var tom1 = Tomdrum(110,   10, 0.2, 1.5);
-var tom2 = Tomdrum(137.5, 10, 0.2, 1.5);
-var tom3 = Tomdrum(165,   10, 0.2, 1.5);
+var tom1 = Tomdrum(110*3/4, 10, 0.75, 0.02, 1);
+var tom2 = Tomdrum(110, 10, 0.75, 0.02, 1);
+var tom3 = Tomdrum(165, 10, 0.75, 0.02, 1);
 
 var snare2 = Snaredrum(440, 50, 0.05, 0.0);
 var snare3 = Snaredrum(440, 50, 0.05, 0.1);
@@ -96,24 +93,36 @@ var drums = {
   }
 };
 
-var wet;
-var rev = Reverb();
-rev.room(0.9).damp(0.9);
 
-
-var bpm = 150;
+var bpm = 120;
 
 // choose a sample beat to play
 // 0: basic rock beat
+// 1: basic swing beat
 // 2: Song 2 (Blur)
+// 3: basic waltz
+// 4: Four on the floor
+// 5: Funky drummer (James Brown)
+// 6: Amen break (The Winstons)
+// 7: Morning Bell (Radiohead)
+// 8: untss untss untss
+// 9: Last Nite (The Strokes)
+// 10: The Gold We're Digging (Parts & Labor)
+// 11: Maps (The Yeah Yeah Yeah)
 
-var beat_selection = 2;
+var beat_selection = 11;
 
 
 
 
 
 
+function compress(w){
+  return Math.atan(w*(Math.PI/2))/(Math.PI/2);
+}
+function compress2(w){
+  return [Math.atan(w[0]*(Math.PI/2))/(Math.PI/2), Math.atan(w[1]*(Math.PI/2))/(Math.PI/2)];
+}
 
 function at(t1,t2){return (t1 >= t2 && t1 <= t2+1/sampleRate);}
 
@@ -124,8 +133,6 @@ function each(b, beat, per_beat){
 var beats = 0.0;
 
 
-var fill_switch = 0;
-
 
 export function dsp(t) {
   
@@ -133,10 +140,20 @@ export function dsp(t) {
   
   switch(beat_selection){
     case 0:
-      if (each(beats,0,4)) bassdrum.hit(1);
-      if (each(beats,5,8)) bassdrum.hit(1);
-      if (each(beats,2,4)) snare.hit(1);
+      if (each(beats,0,   2)) bassdrum.hit(1);
+      if (each(beats,2.5, 4)) bassdrum.hit(1);
+      if (each(beats,1,   2)) snare.hit(1);
+      if (each(beats,0,   0.5)) hihat.hit(1);
+      
+      break;
+      
+    case 1:
+      if (each(beats,0,2)) bassdrum.hit(1);
+      if (each(beats,1,2)) snare.hit(1);
+      
       if (each(beats,0,1)) hihat.hit(1);
+      if (each(beats,2/3,2)) hihat.hit(0.6);
+      if (each(beats,5/3,2)) hihat.hit(0.6);
       
       break;
       
@@ -160,14 +177,185 @@ export function dsp(t) {
       if (each(beats,7.5,8)) hihat.set_decay(5);
       
       break;
+      
+    case 3:
+      
+      if (each(beats,0,3)) bassdrum.hit(1);
+      if (each(beats,1,3)) snare.hit(1);
+      if (each(beats,2,3)) snare.hit(0.7);
+      
+      if (each(beats,0,1)) hihat.hit(1);
+      
+    break;
+      
+    case 4:
+      if (each(beats,0, 0.5)) bassdrum.hit(1);
+      if (each(beats,1, 2)) snare.hit(1);
+      if (each(beats,0, 0.5)) hihat.hit(1);
+      if (each(beats,0.25, 0.5)) hihat.hit(0.2);
+      
+      break;
+      
+    case 5:
+      
+      if (each(beats,0,2)) bassdrum.hit(1);
+      if (each(beats,0.5,2)) bassdrum.hit(0.8);
+      if (each(beats,3.25,4)) bassdrum.hit(0.5);
+      
+      if (each(beats,1,4)) snare.hit(0.9);
+      if (each(beats,1.75,4)) snare.hit(1);
+      if (each(beats,2.25,4)) snare.hit(0.6);
+      if (each(beats,2.75,4)) snare.hit(0.7);
+      if (each(beats,3,4)) snare.hit(1);
+      
+      
+      if (each(beats,0,0.5)) hihat.hit(1);
+      
+      break;
+      
+    case 6:
+      
+      if (beats%16 < 8){
+      
+        if (each(beats,0,4)) bassdrum.hit(1);
+        
+        if (each(beats,0.5,4)) bassdrum.hit(0.8);
+        
+        if (each(beats,1,4)) snare.hit(0.9);
+        
+        
+        if (each(beats,1.75,4)) snare.hit(1);
+        
+        if (each(beats,2.25,4)) snare.hit(0.8);
+        if (each(beats,2.5,4)) bassdrum.hit(0.8);
+        if (each(beats,2.75,4)) bassdrum.hit(0.5);
+        if (each(beats,3,4)) snare.hit(0.9);
+        
+        
+        if (each(beats,3.75,4)) snare.hit(0.6);
+        
+        if (each(beats,0,0.5)) hihat.hit(1);
+        
+      } else if (beats%16 < 12){
+      
+        if (each(beats,0,4)) bassdrum.hit(1);
+        
+        if (each(beats,0.5,4)) bassdrum.hit(0.8);
+        
+        if (each(beats,1,4)) snare.hit(0.9);
+        
+        
+        if (each(beats,1.75,4)) snare.hit(1);
+        
+        if (each(beats,2.25,4)) snare.hit(0.8);
+        if (each(beats,2.5,4)) bassdrum.hit(0.8);
+        
+        
+        
+        if (each(beats,3.5,4)) snare.hit(0.9);
+        
+        if (each(beats,0,0.5)) hihat.hit(1);
+        
+      } else {
+        
+        
+        if (each(beats,0.25,4)) snare.hit(0.6);
+        if (each(beats,0.5,4)) bassdrum.hit(1);
+        if (each(beats,0.75,4)) bassdrum.hit(0.5);
+        if (each(beats,1,4)) snare.hit(1);
+        
+        
+        if (each(beats,1.75,4)) snare.hit(1);
+        
+        if (each(beats,2.25,4)) snare.hit(0.8);
+        if (each(beats,2.5,4)) bassdrum.hit(0.8);
+        
+        
+        
+        if (each(beats,3.5,4)) snare.hit(0.9);
+        
+        if (each(beats,0,0.5)) hihat.hit(1);
+      }
+      
+      break;
+      
+    case 7:
+      
+      if (each(beats,0,5)) bassdrum.hit(1);
+      if (each(beats,1.5,5)) snare.hit(1);
+      if (each(beats,2.5,5)) bassdrum.hit(0.8);
+      if (each(beats,3,5)) bassdrum.hit(1);
+      
+      if (each(beats,4,5)) snare.hit(0.7);
+      if (each(beats,4.25,5)) snare.hit(0.6);
+      if (each(beats,4.5,5)) snare.hit(0.6);
+      
+      if (each(beats,0,0.5) && beats%5<4) hihat.hit(1);
+      
+      break;
+      
+    case 8:
+      
+      if (each(beats,0,1)) bassdrum.hit(1);
+      if (each(beats,0.5,1)) hihat.hit(1);
+      
+      break;
+      
+    case 9:
+      
+      if (each(beats,0,4)) bassdrum.hit(1);
+      if (each(beats,1,4)) bassdrum.hit(1);
+      if (each(beats,2,4)) bassdrum.hit(1);
+      if (each(beats,2.75,4)) bassdrum.hit(0.7);
+      if (each(beats,3.25,4)) bassdrum.hit(0.5);
+      
+      if (each(beats,0.5,1)) snare.hit(1);
+      
+      if (each(beats,0,0.5)) hihat.hit(1);
+      
+      break;
+      
+    case 10:
+      
+      if (each(beats,0,1)) bassdrum.hit(1);
+      if (each(beats,0.5,2)) snare.hit(0.8);
+      if (each(beats,0.75,2)) snare.hit(1);
+      if (each(beats,1.25,2)) snare.hit(0.8);
+      if (each(beats,1.5,2)) snare.hit(1);
+      
+      if (each(beats,0,0.5)) hihat.hit(1);
+      if (each(beats,0.25,1)) hihat.hit(1);
+      
+      break;
+      
+    case 11:
+      
+      if (each(beats,0,4)) bassdrum.hit(1);
+      if (each(beats,0.5,4)) bassdrum.hit(1);
+      if (each(beats,1,4)) bassdrum.hit(1);
+      if (each(beats,2,4)) bassdrum.hit(1);
+      if (each(beats,2.5,4)) bassdrum.hit(1);
+      
+      if (each(beats,1.5,4)) snare.hit(1);
+      if (each(beats,3,4)) snare.hit(1);
+      
+      
+      if (each(beats,0,0.5)) tom1.hit(0.8);
+      
+      if (each(beats,0.25,8)) tom2.hit(1.5);
+      
+      if (each(beats,4,8)) tom2.hit(2);
+      if (each(beats,4.5,8)) tom2.hit(1);
+      if (each(beats,5,8)) tom2.hit(1);
+      
+      break;
   }
 
-  var output = compress(drums.play());
+  var output = drums.play();
+  output = compress((output[0] + output[1])/2);
   
-  wet = rev.run(output);
   
-  if (each(beats,0,4)) console.log(wet);
-
+  
   return output;
   
   
@@ -364,8 +552,4 @@ export function dsp(t) {
 
   */
   
-}
-
-function compress(w){
-  return [Math.atan(w[0]*(Math.PI/2))/(Math.PI/2), Math.atan(w[1]*(Math.PI/2))/(Math.PI/2)];
 }

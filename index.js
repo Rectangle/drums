@@ -78,7 +78,7 @@ export function Bassdrum(freq, decay, freq_decay, click_amp, base_amp){
   
   var tap_decay = 5*decay;
   
-  var drumhead = Drumhead(freq, bass_drum_harmonics, 1, decay, freq_decay, base_amp);
+  var drumhead = Drumhead(freq, bass_drum_harmonics, 2, decay, freq_decay, base_amp);
   var drumnoise = NoiseMaker(0, tap_decay, click_amp);
   
   return{
@@ -129,22 +129,26 @@ export function Snaredrum(freq, decay, noise_amp, drumhead_amp){
 
 
 
-export function Tomdrum(freq, decay, freq_decay, base_amp){
+export function Tomdrum(freq, decay, freq_decay, noise_amp, drumhead_amp){
   
+  var drumhead = Drumhead(freq, snare_drum_harmonics, 1, decay, freq_decay, drumhead_amp);
+  var drumnoise = NoiseMaker(20, decay, noise_amp);
   
-  var drumhead = Drumhead(freq, snare_drum_harmonics, 1, decay, freq_decay, base_amp);
   
   return{
     
     drumhead : drumhead,
-    
+    drumnoise : drumnoise,
     
     hit : function(v){
+      
+      v *= (Math.random()*2-1) * 0.2 + 1;
       this.drumhead.hit(v);
+      this.drumnoise.hit(v);
     },
     
     play : function(){
-      return this.drumhead.play();
+      return this.drumhead.play() + this.drumnoise.play();
     }
     
   };
