@@ -60,7 +60,7 @@ export function Drumhead(freq, harmonics, harmonic_power, decay, freq_decay, bas
       }
       
       for (var i in harmonics){
-        w += Math.pow(-1,i) * v * Math.cos(2 * Math.PI * f * harmonics[i] * t) / Math.pow(harmonics[i],harmonic_power+1) *(2*Math.PI*f)/sampleRate;
+        w += Math.pow(-1,i) * v * Math.cos(2 * Math.PI * f * harmonics[i] * t) / Math.pow(harmonics[i],harmonic_power) *(2*Math.PI*f)/sampleRate;
       }
       
       w *= (1 - decay/sampleRate);
@@ -79,7 +79,7 @@ export function Bassdrum(freq, decay, freq_decay, base_amp){
   
   var tap_decay = 5*decay;
   
-  var drumhead = Drumhead(freq, bass_drum_harmonics, 0, decay, freq_decay, base_amp);
+  var drumhead = Drumhead(freq, bass_drum_harmonics, 1, decay, freq_decay, base_amp);
   var drumnoise = NoiseMaker(0, tap_decay, base_amp/12);
   
   return{
@@ -104,7 +104,7 @@ export function Bassdrum(freq, decay, freq_decay, base_amp){
 
 export function Snaredrum(freq, decay, noise_amp, drumhead_amp){
   
-  var drumhead = Drumhead(freq, snare_drum_harmonics, 0, decay, 0, drumhead_amp);
+  var drumhead = Drumhead(freq, snare_drum_harmonics, 1, decay, 0, drumhead_amp);
   var drumnoise = NoiseMaker(20, decay, noise_amp);
   
   
@@ -128,9 +128,4 @@ export function Snaredrum(freq, decay, noise_amp, drumhead_amp){
   
 }
 
-export function Tomdrum(freq, decay, base_amp){
-  
-  return Bassdrum(freq, decay, 0.7, base_amp);
-
-}
 

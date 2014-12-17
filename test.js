@@ -16,6 +16,36 @@
  *    decay signifies how rapidly the noise decays, with higher being faster
  *    base_amp is an easy way to multiply the amplitude for the entire NoiseMaker
  * 
+ *    NoiseMaker is useful for hihats, clicks and rattles
+ *    White noise gives a simple hihat, with longer decay a more open hihat, and a very short decay a click
+ *    Brown noise sounds like hitting a rattling sheet of metal
+ * 
+ * Drumhead(freq, harmonics, harmonic_power, decay, freq_decay, base_amp)
+ *    Plays a sine wave, with specified overtones that decays in amplitude and frequency
+ *    freq signifies the base frequency
+ *    harmonics is an array of the hamonics used
+ *    harmonic_power signifies that amplutide of the nth harmonic is 1/n^harmonic_power
+ *    decay signifies how rapidly the amplitudes decay, with higher being faster
+ *    freq_decay signifies how rapidly the frequnecies decay, with higher being faster
+ *    base_amp is an easy way to multiply the amplitude for the entire NoiseMaker
+ * 
+ * Bassdrum(freq, decay, freq_decay, base_amp)
+ *    Sets up a drumhead to sound like a bass drum or tom-tom.
+ *    A combination of a Drumhead with a small clicking Noisemaker.
+ *    The harmonics are taken from: 
+ *    http://www.soundonsound.com/sos/feb02/articles/synthsecrets0202.asp
+ *    It's important that the harmonics are non-integers, as drums are characteristically inharmonic.
+ *    For a tighter membrane, lower the freq_decay. A freq decay of 0 sounds like a timpani
+ *    For suggested examples, see below
+ * 
+ * Snaredrum(freq, decay, noise_amp, drumhead_amp)
+ *    Sets up a drumhead to sound like a snare drum.
+ *    A combination of a Drumhead (with drumhead_amp) with a brown Noisemaker (with noise_amp).
+ *    The harmonics are taken from:
+ *    http://www.soundonsound.com/sos/Mar02/articles/synthsecrets0302.asp
+ *    For an open snare, set noise_amp to 0.
+ *    Setting drumhead_amp to low values gives a harsh, flat sounding snare.
+ *    Recommended ratio is to set drumhead_amp = 4*noise_amp (as below)
  * 
  */
 
@@ -24,17 +54,16 @@ import { NoiseMaker } from './index';
 import { Drumhead } from './index';
 import { Bassdrum } from './index';
 import { Snaredrum } from './index';
-import { Tomdrum } from './index';
 
-var bassdrum = Bassdrum(80, 30, 2, 1);
+var bassdrum = Bassdrum(82.5, 30, 2, 1.5);
 
 var hihat = NoiseMaker(0, 30, 0.1);
 
 var snare = Snaredrum(220, 20, 0.2, 0.8);
 
-var tom1 = Tomdrum(82.5, 10, 2);
-var tom2 = Tomdrum(110, 10, 2);
-var tom3 = Tomdrum(165, 10, 2);
+var tom1 = Bassdrum(82.5, 10, 0.7, 1.5);
+var tom2 = Bassdrum(110, 10, 0.7, 1.5);
+var tom3 = Bassdrum(165, 10, 0.7, 1.5);
 
 var snare2 = Snaredrum(440, 50, 0.05, 0.0);
 var snare3 = Snaredrum(440, 50, 0.05, 0.1);
