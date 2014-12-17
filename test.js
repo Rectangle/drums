@@ -65,7 +65,7 @@ var hihat = NoiseMaker(0, 30, 0.1);
 
 var snare = Snaredrum(220, 20, 0.2, 1);
 
-var tom1 = Tomdrum(110*3/4, 10, 0.75, 0.02, 1);
+var tom1 = Tomdrum(110*3/4, 10, 0.75, 0.02, 1.5);
 var tom2 = Tomdrum(110, 10, 0.75, 0.02, 1);
 var tom3 = Tomdrum(165, 10, 0.75, 0.02, 1);
 
@@ -94,7 +94,7 @@ var drums = {
 };
 
 
-var bpm = 120;
+var bpm = 90;
 
 // choose a sample beat to play
 // 0: basic rock beat
@@ -108,9 +108,9 @@ var bpm = 120;
 // 8: untss untss untss
 // 9: Last Nite (The Strokes)
 // 10: The Gold We're Digging (Parts & Labor)
-// 11: Maps (The Yeah Yeah Yeah)
+// 11: Maps (The Yeah Yeah Yeahs)
 
-var beat_selection = 11;
+var beat_selection = 5;
 
 
 
@@ -198,18 +198,24 @@ export function dsp(t) {
       
     case 5:
       
-      if (each(beats,0,2)) bassdrum.hit(1);
-      if (each(beats,0.5,2)) bassdrum.hit(0.8);
-      if (each(beats,3.25,4)) bassdrum.hit(0.5);
       
-      if (each(beats,1,4)) snare.hit(0.9);
-      if (each(beats,1.75,4)) snare.hit(1);
-      if (each(beats,2.25,4)) snare.hit(0.6);
-      if (each(beats,2.75,4)) snare.hit(0.7);
-      if (each(beats,3,4)) snare.hit(1);
+      if (each(beats,0,4)) bassdrum.hit(1);
+      if (each(beats,0.5,4)) bassdrum.hit(1);
+      if (each(beats,1,4)) snare.hit(1);
       
       
-      if (each(beats,0,0.5)) hihat.hit(1);
+      if (each(beats,2.25,4)) snare.hit(0.8);
+      if (each(beats,2.5,4)) bassdrum.hit(1);
+      
+      if (each(beats,2.75,4)) snare.hit(0.5);
+      
+      if (each(beats,6.875,8)) snare.hit(0.5);
+      
+      if (each(beats,3,4)) snare.hit(0.4);
+      if (each(beats,3.25,4)) bassdrum.hit(1);
+      if (each(beats,3.5,4)) snare.hit(0.7);
+      
+      if (each(beats,0,0.25)) hihat.hit(1);
       
       break;
       
