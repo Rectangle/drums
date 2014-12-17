@@ -24,7 +24,7 @@ export function NoiseMaker(color, decay, base_amp){
       
       v *= (1 - decay/sampleRate);
       
-      w *= color;
+      w *= color/(color+1);
       w += v * (2 * Math.random() - 1) * base_amp;
       return w;
     }
@@ -105,7 +105,7 @@ export function Bassdrum(freq, decay, freq_decay, base_amp){
 export function Snaredrum(freq, decay, noise_amp, drumhead_amp){
   
   var drumhead = Drumhead(freq, snare_drum_harmonics, 0, decay, 0, drumhead_amp);
-  var drumnoise = NoiseMaker(0.95, decay, noise_amp);
+  var drumnoise = NoiseMaker(20, decay, noise_amp);
   
   
   return{

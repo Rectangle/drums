@@ -4,16 +4,21 @@
  * 
  * 
  * Tools for making custom drum kits.
- * Each function, when run, returns an object
+ * Each function, when run, returns an object with at least two functions:
+ * hit(vel), and play().
+ * 
+ * hit(vel) signals the drum to be hit, with relative velocity vel
+ * play() runs the drum though one sample, returning its current value
  * 
  * NoiseMaker(color, decay, base_amp)
- * 
- * 
+ *    Generates noise when hit.
+ *    color signifies how "brown" the noise is, with 0 bring white noise and higher values bass-heavy brown noise
+ *    decay signifies how rapidly the noise decays, with higher being faster
+ *    base_amp is an easy way to multiply the amplitude for the entire NoiseMaker
  * 
  * 
  */
 
-stop
 
 import { NoiseMaker } from './index';
 import { Drumhead } from './index';
