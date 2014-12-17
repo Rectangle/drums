@@ -90,7 +90,17 @@ var drums = {
 };
 
 
-var bpm = 240;
+var bpm = 180;
+
+// choose a sample beat to play
+// 0: basic rock beat
+// 2: Song 2 (Blur)
+
+var beat_selection = 2;
+
+
+
+
 
 
 
@@ -102,7 +112,6 @@ function each(b, beat, per_beat){
 
 var beats = 0.0;
 
-var tally = 0;
 
 var fill_switch = 0;
 
@@ -111,16 +120,34 @@ export function dsp(t) {
   
   beats += 1/sampleRate/60*bpm;
   
+  switch(beat_selection){
+    case 0:
+      if (each(beats,0,4)) bassdrum.hit(1);
+      if (each(beats,5,8)) bassdrum.hit(1);
+      if (each(beats,2,4)) snare.hit(1);
+      if (each(beats,0,1)) hihat.hit(1);
+      
+      break;
+      
+    case 2:
+      if (each(beats,0,4)) bassdrum.hit(1);
+      if (each(beats,2,8)) bassdrum.hit(1);
+      if (each(beats,2.5,4)) bassdrum.hit(1);
+      if (each(beats,4.5,8)) bassdrum.hit(1);
+      if (each(beats,5.5,8)) bassdrum.hit(1);
+      
+      if (each(beats,1,2)) snare.hit(1);
+      if (each(beats,7.5,8)) snare.hit(1);
+      
+      if (each(beats,3.5,4)) tom2.hit(1);
+      
+      if (each(beats,0,0.5)) hihat.hit(1);
+      
+      break;
+  }
+  
   
   /*
-  var w = 0;
-  
-  for (var i in harmonics){
-    var h = harmonics[i];
-    w += Math.pow(-1,i) * Math.sin(2*Math.PI*freq*(t%m)*h)/Math.pow(h,2) * Math.exp(-(t%m)*8);
-  }
-  */
-  
   
   if (each(beats,0,1)) hihat.hit(1);
   if (each(beats,0.5,1)) hihat.hit(0.2);
@@ -310,8 +337,7 @@ export function dsp(t) {
   //hihat.set_decay(30 - 20 * ((beats/32)%1)*((beats/32)%1));
   
 
-
-  tally++;
+  */
 
   var output = compress(drums.play());
   
