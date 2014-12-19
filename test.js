@@ -1,9 +1,6 @@
 
 /**
- * test
- * 
- * 
- * Tools for making custom drum kits.
+ * Included are tools for making custom drum kits.
  * Each function, when run, returns an object with at least two functions:
  * hit(vel), and play().
  * 
@@ -12,7 +9,8 @@
  * 
  * NoiseMaker(color, decay, base_amp)
  *    Generates noise when hit.
- *    color signifies how "brown" the noise is, with 0 bring white noise and higher values bass-heavy brown noise
+ *    color signifies how "brown" the noise is, with 0 being white noise 
+ *    and higher values being more bass-heavy brown noise.
  *    decay signifies how rapidly the noise decays, with higher being faster
  *    base_amp is an easy way to multiply the amplitude for the entire NoiseMaker
  * 
@@ -48,9 +46,28 @@
  *    Setting drumhead_amp to low values gives a harsh, flat sounding snare.
  * 
  * Tomdrum(freq, decay, freq_decay, base_amp)
- *    Combines the Noisemaker of the SnareDrum with the frequency decayed Drumhead of the Bassdrum
+ *    Combines two Drumheads at different settings to try and replicate the complexity of this sound.
  * 
  */
+ 
+ 
+var bpm = 120;
+
+// choose a sample beat to play by setting beat_selection
+// 0: basic rock beat
+// 1: basic swing beat
+// 2: Song 2 (Blur)
+// 3: basic waltz
+// 4: Four on the floor
+// 5: Funky drummer (James Brown)
+// 6: Amen break (The Winstons)
+// 7: Morning Bell (Radiohead)
+// 8: untss untss untss
+// 9: Last Nite (The Strokes)
+// 10: The Gold We're Digging (Parts & Labor)
+// 11: Maps (The Yeah Yeah Yeahs)
+
+var beat_selection = 9;
 
 
 import { NoiseMaker } from './index';
@@ -59,15 +76,15 @@ import { Bassdrum } from './index';
 import { Snaredrum } from './index';
 import { Tomdrum } from './index';
 
-var bassdrum = Bassdrum(82.5, 30, 2, 0.1, 2);
+var bassdrum = Bassdrum(55, 30, 2, 0.05, 3);
 
 var hihat = NoiseMaker(0, 30, 0.1);
 
 var snare = Snaredrum(220, 20, 0.2, 1);
 
-var tom1 = Tomdrum(110*3/4, 10, 0.75, 0.02, 1.5);
-var tom2 = Tomdrum(110, 10, 0.75, 0.02, 1);
-var tom3 = Tomdrum(165, 10, 0.75, 0.02, 1);
+var tom1 = Tomdrum(82.5, 10, 0.7, 1);
+var tom2 = Tomdrum(110, 10, 0.5, 1);
+var tom3 = Tomdrum(137.5, 10, 0.4, 1);
 
 var snare2 = Snaredrum(440, 50, 0.05, 0.0);
 var snare3 = Snaredrum(440, 50, 0.05, 0.1);
@@ -94,23 +111,6 @@ var drums = {
 };
 
 
-var bpm = 90;
-
-// choose a sample beat to play
-// 0: basic rock beat
-// 1: basic swing beat
-// 2: Song 2 (Blur)
-// 3: basic waltz
-// 4: Four on the floor
-// 5: Funky drummer (James Brown)
-// 6: Amen break (The Winstons)
-// 7: Morning Bell (Radiohead)
-// 8: untss untss untss
-// 9: Last Nite (The Strokes)
-// 10: The Gold We're Digging (Parts & Labor)
-// 11: Maps (The Yeah Yeah Yeahs)
-
-var beat_selection = 5;
 
 
 
@@ -209,7 +209,8 @@ export function dsp(t) {
       
       if (each(beats,2.75,4)) snare.hit(0.5);
       
-      if (each(beats,6.875,8)) snare.hit(0.5);
+      if (each(beats,6+3/4+1/8,8)) snare.hit(0.5);
+      if (each(beats,6+3/4+1/8+1/16,8)) snare.hit(0.5);
       
       if (each(beats,3,4)) snare.hit(0.4);
       if (each(beats,3.25,4)) bassdrum.hit(1);
