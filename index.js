@@ -134,7 +134,7 @@ export function Snaredrum(freq, decay, noise_amp, drumhead_amp){
 export function Tomdrum(freq, decay, freq_decay, drumhead_amp){
   
   var drumhead1 = Drumhead(freq, snare_drum_harmonics, 1, decay, freq_decay, drumhead_amp);
-  var drumhead2 = Drumhead(freq*2, extra_harmonics, 0.5, decay, freq_decay/2, drumhead_amp/2);
+  var drumhead2 = Drumhead(freq*2, extra_harmonics, 2, decay, 0, drumhead_amp);
   
   
   return{

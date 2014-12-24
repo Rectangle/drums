@@ -67,7 +67,7 @@ var bpm = 120;
 // 10: The Gold We're Digging (Parts & Labor)
 // 11: Maps (The Yeah Yeah Yeahs)
 
-var beat_selection = 9;
+var beat_selection = 2;
 
 
 import { NoiseMaker } from './index';
