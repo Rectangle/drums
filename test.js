@@ -67,7 +67,7 @@ var bpm = 120;
 // 10: The Gold We're Digging (Parts & Labor)
 // 11: Maps (The Yeah Yeah Yeahs)
 
-var beat_selection = 2;
+var beat_selection = 6;
 
 
 import { NoiseMaker } from './index';
@@ -89,6 +89,7 @@ var tom3 = Tomdrum(137.5, 10, 0.4, 1);
 var snare2 = Snaredrum(440, 50, 0.05, 0.0);
 var snare3 = Snaredrum(440, 50, 0.05, 0.1);
 
+var crash = NoiseMaker(1, 5, 0.3);
 
 var drums = {
   play : function(){
@@ -104,9 +105,11 @@ var drums = {
     var snare2play = snare2.play();
     var snare3play = snare3.play();
     
+    var crashplay = crash.play();
+    
     return [
-      bassdrumplay * 0.5 + hihatplay * 0.6 + snareplay * 0.4 + snare2play*0.5 + tom1play*0.8 + tom2play*0.5 + tom3play*0.2, 
-      bassdrumplay * 0.5 + hihatplay * 0.4 + snareplay * 0.6 + snare3play*0.5 + tom1play*0.2 + tom2play*0.5 + tom3play*0.8];
+      bassdrumplay * 0.5 + hihatplay * 0.6 + snareplay * 0.4 + snare2play*0.5 + tom1play*0.8 + tom2play*0.5 + tom3play*0.2 + crashplay*0.3, 
+      bassdrumplay * 0.5 + hihatplay * 0.4 + snareplay * 0.6 + snare3play*0.5 + tom1play*0.2 + tom2play*0.5 + tom3play*0.8 + crashplay*0.7];
   }
 };
 
@@ -144,6 +147,8 @@ export function dsp(t) {
       if (each(beats,2.5, 4)) bassdrum.hit(1);
       if (each(beats,1,   2)) snare.hit(1);
       if (each(beats,0,   0.5)) hihat.hit(1);
+      
+      if (each(beats,0,8)) crash.hit(1);
       
       break;
       
@@ -275,7 +280,7 @@ export function dsp(t) {
         if (each(beats,1.75,4)) snare.hit(1);
         
         if (each(beats,2.25,4)) snare.hit(0.8);
-        if (each(beats,2.5,4)) bassdrum.hit(0.8);
+        if (each(beats,2.5,4)) bassdrum.hit(0.8); if (each(beats,2.5,4)) crash.hit(1);
         
         
         
@@ -359,7 +364,7 @@ export function dsp(t) {
   }
 
   var output = drums.play();
-  output = compress((output[0] + output[1])/2);
+  //output = compress((output[0] + output[1])/2);
   
   
   
