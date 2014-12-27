@@ -8,6 +8,7 @@ var bass_drum_harmonics = [1.0, 2.36, 1.72, 1.86, 2.72, 3.64]; // , 4.5, 5.46]
 var snare_drum_harmonics = [1.0, 1.6, 2.13, 2.66, 2.3, 2.92, 3.5, 4.07]; // 4.24, 4.84
 var extra_harmonics = [1.0, 1.3, 1.55, 1.85, 2.1, 2.4];
 
+
 export function NoiseMaker(color, decay, base_amp){
   
   var w = 0;
@@ -66,7 +67,7 @@ export function Drumhead(freq, harmonics, harmonic_power, decay, freq_decay, bas
       
       w *= (1 - decay/sampleRate);
       v *= (1 - decay/sampleRate);
-      f *= (1 - freq_decay/sampleRate);
+      if (t < 0.1) f *= (1 - freq_decay/sampleRate);
       
       t += 1/sampleRate;
       
@@ -134,7 +135,7 @@ export function Snaredrum(freq, decay, noise_amp, drumhead_amp){
 export function Tomdrum(freq, decay, freq_decay, drumhead_amp){
   
   var drumhead1 = Drumhead(freq, snare_drum_harmonics, 1, decay, freq_decay, drumhead_amp);
-  var drumhead2 = Drumhead(freq*2, extra_harmonics, 2, decay, 0, drumhead_amp);
+  var drumhead2 = Drumhead(freq*2, extra_harmonics, 1, decay, 0, drumhead_amp);
   
   
   return{
